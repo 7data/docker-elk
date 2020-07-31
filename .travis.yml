@@ -27,9 +27,9 @@ before_script:
     }
 
 after_script:
-  - docker image prune --force && docker images
-  - IMG=$(docker images --format "{{.Repository}}" | grep ${NAMESPACE})
+  - IMG=$(docker images | grep "seconds" | aws '{print $1}')
   - echo ${IMG}
+  - docker images
 
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ] ; then
       echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
