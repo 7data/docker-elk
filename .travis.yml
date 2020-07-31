@@ -27,7 +27,7 @@ before_script:
     }
 
 after_script:
-  - IMG=$(docker images | grep "seconds" | aws '{print $1}')
+  - IMG=$(docker images | grep "seconds" | awk '{print $1}')
   - echo ${IMG}
   - docker images
 
