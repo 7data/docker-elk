@@ -30,8 +30,8 @@ after_script:
   - docker image prune --force && docker images
 
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ] ; then
-      echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin;
-      IMG=$(docker images --format "{{.Repository}}" | grep ${NAMESPACE})
+      echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
+      IMG=$(docker images --format "{{.Repository}}" | grep ${NAMESPACE}) ;
       docker push "${IMG}";
       status=$?;
       echo "[${status}] Image pushed > ${REPOSITORY}";
