@@ -37,7 +37,7 @@ RUN mkdir -p /tmp/build/src && cd /tmp/build \
 
 # Second build stage
 
-FROM qpod/qpod:base
+FROM ubuntu:latest
 
 LABEL maintainer="haobibo@gmail.com"
 
