@@ -41,8 +41,8 @@ jobs:
     - name: elasticsearch
       stage: elasticsearch
       script:
-        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.0"
-        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.1"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.0"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.1"
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4
