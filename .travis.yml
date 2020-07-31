@@ -17,7 +17,7 @@ before_script:
   - build_image() {
       IMG=$1; TAG=$2; FILE=$3; shift 3;
       if [ "$TRAVIS_BRANCH" != "master" ] ; then
-        IMG="${IMG}-${TRAVIS_BRANCH}"
+        IMG="${IMG}-${TRAVIS_BRANCH}" ;
       fi
       docker build --squash --force-rm=true -t "${REPOSITORY}/${IMG}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)";
     }
@@ -43,8 +43,8 @@ jobs:
     - name: elasticsearch
       stage: elasticsearch
       script:
-        - build_image_squash elasticsearch 7.8.0 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.0"
-        - build_image_squash elasticsearch 7.8.1 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.1"
+        - build_image elasticsearch 7.8.1 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.1"
+        - build_image elasticsearch 7.8.0 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.0"
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4
