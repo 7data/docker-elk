@@ -18,8 +18,8 @@ before_script:
       IMG=$1; TAG=$2; FILE=$3; shift 3;
       if [ "$TRAVIS_BRANCH" != "master" ] ; then
         IMG="${IMG}-${TRAVIS_BRANCH}" ;
-      fi
-      docker build --squash --force-rm=true -t "${REPOSITORY}/${IMG}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)";
+      fi ;
+      docker build --squash --force-rm=true -t "${REPOSITORY}/${IMG}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)" ;
     }
   - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2"; }
 
