@@ -31,14 +31,17 @@ before_script:
 
 after_script:
   - docker image prune --force && docker images
-  - IMG=$(docker images | grep "seconds" | awk '{print $1}')
+  - IMGS=$(docker images | grep "seconds" | awk '{print $1}')
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ] ; then
       echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
-      docker push "${IMG}";
-      status=$?;
-      echo "[${status}] Image pushed > ${IMG}";
+      for IMG in $(echo $IMGS | tr " " "\n") ;
+      do
+        docker push "${IMG}";
+        status=$?;
+        echo "[${status}] Image pushed > ${IMG}";
+      done
     else
-      echo "Not pushing ${NAMESPACE} in PR ...";
+      echo "Not pushing ${IMGS} in PR ...";
     fi
 
 stages:
