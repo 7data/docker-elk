@@ -1,0 +1,60 @@
+language: minimal
+
+dist: bionic
+
+env:
+  global:
+    - REGISTRY_URL: "docker.io"  # docker.io or other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
+
+install:
+  - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
+
+before_script:
+  - echo IP=$(curl -s http://ifconfig.me/ip)
+  - docker info
+  - CI_PROJECT_NAMESPACE=$([[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "$(dirname ${TRAVIS_REPO_SLUG})" || echo "$(dirname ${TRAVIS_PULL_REQUEST_SLUG})")
+  - export NAMESPACE=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
+  - build_image() {
+      IMG=$1; TAG=$2; FILE=$3; shift 3;
+      if [ "$TRAVIS_BRANCH" != "master" ] ; then
+        IMG="${IMG}-${TRAVIS_BRANCH}" ;
+      fi ;
+      docker build --squash --force-rm=true -t "${NAMESPACE}/${IMG}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)" ;
+    }
+  - alias_image() {
+      IMG=$1; TAG_OLD=$2; TAG_NEW=$3; shift 3;
+      if [ "$TRAVIS_BRANCH" != "master" ] ; then
+        IMG="${IMG}-${TRAVIS_BRANCH}" ;
+      fi ;
+      docker tag "${NAMESPACE}/${IMG}:${TAG_OLD}" "${NAMESPACE}/${IMG}:${TAG_NEW}" ;
+    }
+
+after_script:
+  - docker image prune --force && docker images
+  - IMGS=$(docker images | grep "seconds" | awk '{print $1 ":" $2}')
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ] ; then
+      echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
+      for IMG in $(echo $IMGS | tr " " "\n") ;
+      do
+        docker push "${IMG}";
+        status=$?;
+        echo "[${status}] Image pushed > ${IMG}";
+      done
+    else
+      echo "Not pushing ${IMGS} in PR ...";
+    fi
+
+stages:
+  - elasticsearch
+
+jobs:
+  include:
+    - name: es7
+      stage: elasticsearch
+      script:
+        - build_image elasticsearch 7.8.1 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.1"
+        - alias_image elasticsearch 7.8.1 7
+        - alias_image elasticsearch 7.8.1 latest
+
+notifications:
+  slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4
