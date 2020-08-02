@@ -29,12 +29,11 @@ before_script:
 after_script:
   - docker image prune --force && docker images
   - IMG=$(docker images | grep "seconds" | awk '{print $1}')
-  - echo ${IMG}
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ] ; then
       echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
       docker push "${IMG}";
       status=$?;
-      echo "[${status}] Image pushed > ${REPOSITORY}";
+      echo "[${status}] Image pushed > ${IMG}";
     else
       echo "Not pushing ${NAMESPACE} in PR ...";
     fi
@@ -44,11 +43,19 @@ stages:
 
 jobs:
   include:
-    - name: elasticsearch
+    - name: es7
       stage: elasticsearch
       script:
         - build_image elasticsearch 7.8.1 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.1"
-        # - build_image elasticsearch 7.8.0 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.0"
+        - alias_image elasticsearch 7.8.1 7
+        - alias_image elasticsearch 7.8.1 latest
+
+    include:
+    - name: es6
+      stage: elasticsearch
+      script:
+        - build_image elasticsearch 6.8.11 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.0"
+        - alias_image elasticsearch 6.8.11 6
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4
