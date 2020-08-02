@@ -53,7 +53,7 @@ jobs:
     - name: es6
       stage: elasticsearch
       script:
-        - build_image elasticsearch 6.8.11 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.0"
+        - build_image elasticsearch 6.8.11 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=6.8.11"
         - alias_image elasticsearch 6.8.11 6
 
 notifications:
