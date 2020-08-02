@@ -31,7 +31,7 @@ before_script:
 
 after_script:
   - docker image prune --force && docker images
-  - IMGS=$(docker images | grep "seconds" | awk '{print $1}')
+  - IMGS=$(docker images | grep "seconds" | awk '{print $1 ":" $2}')
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ] ; then
       echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
       for IMG in $(echo $IMGS | tr " " "\n") ;
