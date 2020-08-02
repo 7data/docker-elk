@@ -50,7 +50,6 @@ jobs:
         - alias_image elasticsearch 7.8.1 7
         - alias_image elasticsearch 7.8.1 latest
 
-  include:
     - name: es6
       stage: elasticsearch
       script:
