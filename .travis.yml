@@ -23,6 +23,9 @@ before_script:
     }
   - alias_image() {
       IMG=$1; TAG_OLD=$2; TAG_NEW=$3; shift 3;
+      if [ "$TRAVIS_BRANCH" != "master" ] ; then
+        IMG="${IMG}-${TRAVIS_BRANCH}" ;
+      fi ;
       docker tag "${NAMESPACE}/${IMG}:${TAG_OLD}" "${NAMESPACE}/${IMG}:${TAG_NEW}" ;
     }
 
@@ -49,12 +52,6 @@ jobs:
         - build_image elasticsearch 7.8.1 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=7.8.1"
         - alias_image elasticsearch 7.8.1 7
         - alias_image elasticsearch 7.8.1 latest
-
-    - name: es6
-      stage: elasticsearch
-      script:
-        - build_image elasticsearch 6.8.11 "elasticsearch/Dockerfile" --build-arg "ES_VERSION=6.8.11"
-        - alias_image elasticsearch 6.8.11 6
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4
