@@ -1,6 +1,6 @@
 FROM qpod/qpod:base as builder
 
-ARG ES_VERSION="7.8.1"
+ARG ES_VERSION="7.10.2"
 
 RUN cd /tmp \
  && TINI_VERSION=$(wget --no-check-certificate -qO- https://github.com/krallin/tini/releases.atom | grep 'releases/tag' | head -1 ) \
